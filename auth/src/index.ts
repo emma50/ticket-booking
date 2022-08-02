@@ -1,7 +1,7 @@
-// const express = require('express');
 import express from "express";
 import 'express-async-errors'
 import mongoose from "mongoose";
+import cookieSession from "cookie-session";
 
 import { currentUserRouter } from "./routes/current-user";
 import { signupRouter } from "./routes/singup";
@@ -13,6 +13,16 @@ const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+app.set('trust proxy', true)
+app.use(cookieSession({
+  name: 'session',
+  signed: false,
+  secure: true,
+  keys: [/* secret keys */],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
 app.use(currentUserRouter)
 app.use(signupRouter)
 app.use(signinRouter)
@@ -32,12 +42,6 @@ const start = async () => {
   } catch (err) {
     console.error(err)
   } 
-  // finally {
-  //   app.listen(3000, () => {
-  //     console.log('Server up at port 3000')
-  //     console.log('Listening at port 3000')
-  //   })
-  // }
   app.listen(3000, () => {
     console.log('Server up at port 3000')
     console.log('Listening at port 3000')
