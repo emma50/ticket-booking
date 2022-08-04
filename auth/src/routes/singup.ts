@@ -42,8 +42,6 @@ router.post('/api/users/signup',
     req.session = { jwt: userJWT }
 
     res.status(201).send(newUser)
-    // res.status(201).send('FRESHMAN SEASON')
-
 })
 
 export { router as signupRouter }
