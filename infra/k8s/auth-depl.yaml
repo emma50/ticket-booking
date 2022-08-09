@@ -15,6 +15,13 @@ spec:
       containers:
       - name: auth
         image: ikechukwu1903/auth
+        env:
+          - name: "MY_SECRETS"
+            valueFrom:
+              secretKeyRef:
+                name: mysecrets
+                key: jwt-secret
+
 ---
 apiVersion: v1
 kind: Service
