@@ -1,5 +1,5 @@
 import { Schema, Model, model, Document } from 'mongoose';
-import { Password } from '../services/password'
+import { PasswordManager } from '../services/password'
 
 // Create an interface representing a document in MongoDB.
 interface IUser {
@@ -42,7 +42,7 @@ const userSchema = new Schema<UserDoc>({
 // mongoose pre-save middleware
 userSchema.pre('save', async function(){
   if (this.isModified('password')) {
-    const hashedPassword = await Password.toHash(this.get('password'))
+    const hashedPassword = await PasswordManager.toHash(this.get('password'))
     await this.set('password', hashedPassword)
   }
 })

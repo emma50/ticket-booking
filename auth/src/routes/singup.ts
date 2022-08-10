@@ -1,7 +1,6 @@
-import express, {Request, Response, NextFunction } from 'express';
-import { body, validationResult } from 'express-validator'
+import express from 'express';
+import { body } from 'express-validator'
 import jwt from 'jsonwebtoken';
-import { RequestValidationError } from '../errors/req-validation-error';
 import { BadRequestError } from '../errors/bad-request-error';
 import { User } from '../models/user';
 import { validateRequest } from '../middlewares/validate-request';
