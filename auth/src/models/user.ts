@@ -24,6 +24,19 @@ interface UserDoc extends Document {
 const userSchema = new Schema<UserDoc>({
   email: { type: String, required: true },
   password: { type: String, required: true },
+}, {
+  toJSON: {
+    transform(doc, ret) {
+      delete ret.password
+      delete ret.__v
+
+      if (!ret.id) {
+        ret.id = ret._id
+      }
+
+      delete ret._id
+    }
+  }
 });
 
 // mongoose pre-save middleware
