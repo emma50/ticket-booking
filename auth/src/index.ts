@@ -18,9 +18,9 @@ app.use(cookieSession({
   signed: false,
   secure: true,
 }))
-app.use(currentUserRouter)
 app.use(signupRouter)
 app.use(signinRouter)
+app.use(currentUserRouter)
 app.use(signoutRouter)
 app.all('*', async () => {
   throw new NotFoundError()
@@ -34,7 +34,7 @@ const start = async () => {
   if (!process.env.MY_SECRETS) {
     throw new Error('All secrets must be defined')
   }
-  console.log(process.env, '------------------------------------------------')
+
   try {
     await mongoose.connect('mongodb://auth-mongo-srv:27017/auth')
     console.log('Connected to mongodb')
