@@ -5,9 +5,9 @@ import { RequestValidationError } from '../errors/req-validation-error';
 export const validateRequest = (req: Request, res: Response, next: NextFunction ) => {
   const errors = validationResult(req)
 
-    if (!errors.isEmpty()) {
-      throw new RequestValidationError(errors.array())
-    }
-    
-    next()
+  if (!errors.isEmpty()) {
+    throw new RequestValidationError(errors.array())
+  }
+  
+  next()
 }
