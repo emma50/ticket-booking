@@ -24,5 +24,5 @@ afterAll(async() => {
   // Stop and close connection to mongodb
   await mongo.stop()
   await mongoose.connection.close()
-})
+}, 300000)
 

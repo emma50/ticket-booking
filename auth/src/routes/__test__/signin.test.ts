@@ -1,7 +1,7 @@
 import request from "supertest";
 import { app } from "../../app";
 
-it('Should successfully signin a user', async () => {
+it('Should successfully signin a user with correct credentials', async () => {
   process.env.MY_SECRETS = 'asdfqwer'
 
   await request(app)
