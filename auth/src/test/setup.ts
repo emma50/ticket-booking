@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import request from 'supertest'
 import { app } from "../app";
 
+jest.setTimeout(400000)
 declare global {
   var signup: () => Promise<string[]>;
 }
@@ -29,7 +30,7 @@ afterAll(async() => {
   // Stop and close connection to mongodb
   await mongo.stop()
   await mongoose.connection.close()
-}, 300000)
+})
 
 
 global.signup = async () => {
