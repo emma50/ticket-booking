@@ -7,7 +7,7 @@ deploy:
 build:
   local:
     push: false
-  artifacts:
+  artifacts:  # setup code sync
     - image: ikechukwu1903/auth
       context: auth  # Folder that contains the image
       docker:
@@ -16,4 +16,11 @@ build:
         manual:
           - dest: .
             src: 'src/**/*.ts'
-  
+    - image: ikechukwu1903/client
+      context: client  # Folder that contains the image
+      docker:
+        dockerfile: Dockerfile
+      sync:  
+        manual:
+          - dest: .
+            src: '**/*.js'
