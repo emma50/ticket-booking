@@ -1,15 +1,16 @@
 import { useState } from 'react'
-import axios from 'axios'
-
+import { useRouter } from 'next/router'
 import useRequest from '../../hooks/use-request'
 
 export default () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const router = useRouter()
   const { errors, doRequest } = useRequest({
     url: '/api/users/signup',
     method: 'post',
-    body: { email, password }
+    body: { email, password },
+    onSuccess: () => router.push('/')
   })
 
   const onSubmit = async (evt) => {
