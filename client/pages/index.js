@@ -3,7 +3,8 @@ import buildClient from '../api/build-client'
 // code executed on the browser
 const Landing = ({ currentUser }) => {
   console.log(currentUser)
-  return <h1>Landing page</h1>
+  return currentUser ? <h1>You are already signed in</h1>
+  : <h1>You are not signed in</h1>
 }
 
 // code executed on the server during the SSR process
