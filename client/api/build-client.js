@@ -10,9 +10,7 @@ export default ({ req }) => {
   } else {
     console.log('on browser')
     return axios.create({
-      baseURL: '/',
-      headers: req.headers
+      baseURL: '/'
     });
   }
-  return {}
 }
