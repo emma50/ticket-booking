@@ -1,14 +1,11 @@
 import express from 'express';
-
 import { currentUser } from '@e50tickets/common';
-// import { requireAuth } from '../middlewares/require-auth';
 
 const router = express.Router();
 
 router.get(
   '/api/users/currentuser',
   currentUser,
-  // requireAuth,
   (req, res) => {
     res.status(200).send({ currentUser: req.currentUser || null })
 })
