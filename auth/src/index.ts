@@ -6,9 +6,13 @@ const start = async () => {
     throw new Error('All secrets must be defined')
   }
 
+  if (!process.env.MONGO_URI) {
+    throw new Error('MONGO_URI must be defined')
+  }
+
   try {
-    await mongoose.connect('mongodb://auth-mongo-srv:27017/auth')
-    console.log('Connected to mongodb')
+    await mongoose.connect(process.env.MONGO_URI)
+    console.log('Connected to auth mongodb')
   } catch (err) {
     console.error(err)
   } 
