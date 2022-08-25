@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: # Describes the deployment 
+  name: tickets-depl # Name of deployment
+spec:
+  replicas: 1 # Create one pod
+  selector: #  A selector for the deployment to apply to the pod that the deployment is describing
+    matchLabels: # What pod the deployment is applied to
+      app: tickets
+  template: # This is a pod template. It describes a pod that is launched
+    metadata: # Describes the pod
+      labels: # label for the pod that the deployment is deploying
+        app: tickets
+    spec:
+      containers:
+      - name: tickets
+        image: ikechukwu1903/tickets
+        env:
+          - name: "MONGO_URI"
+            value: "mongodb://tickets-mongo-srv:27017/tickets"
+          - name: "MY_SECRETS"
+            valueFrom:
+              secretKeyRef:
+                name: mysecrets
+                key: jwt-secret
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tickets-srv # Name of service
+spec:
+  type: ClusterIP # Type of service
+  selector:
+    app: tickets # Selects all pods named tickets
+  ports:
+    - name: tickets
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

@@ -24,3 +24,11 @@ build:
         manual:
           - dest: .
             src: '**/*.js'
+    - image: ikechukwu1903/tickets
+      context: tickets  # Folder that contains the image
+      docker:
+        dockerfile: Dockerfile
+      sync:  
+        manual:
+          - dest: .
+            src: 'src/**/*.ts'
