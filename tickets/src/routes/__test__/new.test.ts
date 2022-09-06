@@ -46,21 +46,28 @@ it('returns an error if invalid title is provided', async () => {
 
 it('returns an error if invalid price is provided', async () => {
   await request(app)
-  .post('/api/tickets')
-  .set('Cookie', global.signin())
-  .send({
-    title: 'Movie ticket',
-    price: -10
-  }).expect(400)
+    .post('/api/tickets')
+    .set('Cookie', global.signin())
+    .send({
+      title: 'Movie ticket',
+      price: -10
+    }).expect(400)
 
-await request(app)
-  .post('/api/tickets')
-  .set('Cookie', global.signin())
-  .send({
-    Title: 'Movie ticket',
-  }).expect(400)
+  await request(app)
+    .post('/api/tickets')
+    .set('Cookie', global.signin())
+    .send({
+      Title: 'Movie ticket',
+    }).expect(400)
 })
 
 it('creates a ticket with valid inputs', async () => {
-  //
+  // TODO: Add in a check to make sure a ticket was saved
+  await request(app)
+    .post('/api/tickets')
+    .set('Cookie', global.signin())
+    .send({
+      Title: 'Movie ticket',
+      price: 20
+    }).expect(400)
 })
