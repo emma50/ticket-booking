@@ -10,6 +10,7 @@ spec:
     - host: ticketing.dev
       http:
         paths:
+          # ingress directs auth route traffic to this service
           - path: /api/users/?(.*)
             pathType: Prefix
             backend:
@@ -17,6 +18,15 @@ spec:
                 name: auth-srv
                 port:
                   number: 3000
+          # ingress directs ticket route traffic to this service
+          - path: /api/tickets/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: tickets-srv
+                port:
+                  number: 3000
+          # ingress directs client (react/nextjs)  route traffic to this service
           - path: /?(.*)
             pathType: Prefix
             backend:
