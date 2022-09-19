@@ -25,6 +25,19 @@ class NatsWrapper {
     })
   }
 
+  close() {
+    // listen to a client connection close event and exit process gracefully
+    this.client.on('close', () => {
+      console.log('NATS connection closed')
+      process.exit()
+    })
+
+    // Nodejs runtime process listening to the interrupt signal
+    process.on('SIGINT', () => this.client.close())
+
+    // Nodejs runtime process listening to the terminate signal
+    process.on('SIGTERM', () => this.client.close())
+  }
 }
 
 export const natsWrapper = new NatsWrapper()
