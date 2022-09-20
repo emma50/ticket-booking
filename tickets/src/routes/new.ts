@@ -1,7 +1,9 @@
 import express, { Request, Response } from 'express';
-import { requireAuth, validateRequest } from '@e50tickets/common';
+import { requireAuth, validateRequest, Subjects } from '@e50tickets/common';
 import { body } from 'express-validator'
+import mongoose from 'mongoose';
 import { Ticket } from '../models/ticket';
+import { Event, EventStatus } from '../models/events';
 import { TicketCreatedPublisher } from '../events/publishers/ticket-created-publisher';
 import { natsWrapper } from '../nats-wrapper';
 
@@ -20,24 +22,52 @@ router.post('/api/tickets', requireAuth, [
   async (req: Request, res: Response) => {
     const {title, price} = req.body
 
-    const ticket = Ticket.build({
-      title,
-      price,
-      userId: req.currentUser!.id
-    })
-    await ticket.save()
+    // start mongoose session
+    const session = await mongoose.startSession();
 
-    new TicketCreatedPublisher(natsWrapper.client).publish({
-      id: ticket.id,
-      title: ticket.title,
-      price: ticket.price,
-      userId: ticket.userId
-    })
+    try {
+      // Start transaction
+      await session.startTransaction();
 
-    res.status(201).send({
-      message: 'Successfully created a ticket',
-      data: ticket
-    })
+      const ticket = Ticket.build({
+        title,
+        price,
+        userId: req.currentUser!.id
+      })
+      await ticket.save()
+    
+      const ticketEvent = Event.build({
+        name: Subjects.TicketCreated,
+        data: {
+          title: ticket.title,
+          price: ticket.price,
+          userId: req.currentUser!.id
+        }
+      });
+      await ticketEvent.save();
+
+      await new TicketCreatedPublisher(natsWrapper.client).publish({
+        id: ticketEvent.id,
+        title: ticketEvent.data.title,
+        price: ticketEvent.data.price,
+        userId: ticketEvent.data.userId
+      })
+
+      ticketEvent.set({ status: EventStatus.COMPLETED })
+      await ticketEvent.save();
+
+      res.status(201).send({
+        message: 'Successfully created a ticket',
+        data: ticket
+      })
+    } catch (err) {
+      // remove everything from db on error
+      await session.abortTransaction();
+      throw err;
+    } finally {
+      // close session on both success and error
+      await session.endSession();
+    }
 })
 
 export { router as createTicketRouter }
