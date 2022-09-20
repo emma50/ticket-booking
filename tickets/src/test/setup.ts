@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import jwt from 'jsonwebtoken'
 
 jest.setTimeout(400000)
+jest.mock('../nats-wrapper.ts')
 declare global {
   var signin: () => string[];
 }
