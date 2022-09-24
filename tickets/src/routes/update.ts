@@ -6,6 +6,7 @@ import {
   NotFoundError
 } from '@e50tickets/common';
 import { body } from 'express-validator'
+import mongoose from 'mongoose';
 import { Ticket } from '../models/ticket';
 import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher';
 import { natsWrapper } from '../nats-wrapper';
@@ -36,22 +37,37 @@ router.put('/api/tickets/:id', requireAuth, [
       throw new NotAuthorizedError
     }
 
-    // Update the found ticket document in memory
-    ticket.set({ title, price })
-    // Save ticket document in DB
-    await ticket.save()
+    // start mongoose session
+    const session = await mongoose.startSession();
 
-    new TicketUpdatedPublisher(natsWrapper.client).publish({
-      id: ticket.id,
-      title: ticket.title,
-      price: ticket.price,
-      userId: ticket.userId
-    })
+    try {
+      // Start transaction
+      await session.startTransaction();
 
-    res.status(200).send({
-      message: 'Successfully updated a ticket',
-      data: ticket
-    })
+      // Update the found ticket document in memory
+      ticket.set({ title, price })
+      // Save ticket document in DB
+      await ticket.save()
+
+      new TicketUpdatedPublisher(natsWrapper.client).publish({
+        id: ticket.id,
+        title: ticket.title,
+        price: ticket.price,
+        userId: ticket.userId
+      })
+
+      res.status(200).send({
+        message: 'Successfully updated a ticket',
+        data: ticket
+      })
+    } catch (err) {
+      // remove everything from db on error
+      await session.abortTransaction();
+      throw err;
+    } finally {
+      // close session on both success and error
+      await session.endSession();
+    }
 })
 
 export { router as updateTicketRouter }
