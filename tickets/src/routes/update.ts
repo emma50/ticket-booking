@@ -3,11 +3,13 @@ import {
   requireAuth,
   validateRequest,
   NotAuthorizedError,
-  NotFoundError
+  NotFoundError,
+  Subjects
 } from '@e50tickets/common';
 import { body } from 'express-validator'
 import mongoose from 'mongoose';
 import { Ticket } from '../models/ticket';
+import { Event, EventStatus } from '../models/events';
 import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher';
 import { natsWrapper } from '../nats-wrapper';
 
@@ -49,12 +51,27 @@ router.put('/api/tickets/:id', requireAuth, [
       // Save ticket document in DB
       await ticket.save()
 
+      const ticketEvent = Event.build({
+        name: Subjects.TicketUpdated,
+        data: {
+          title: ticket.title,
+          price: ticket.price,
+          userId: req.currentUser!.id
+        }
+      });
+      await ticketEvent.save();
+      console.log(ticket, 'TICKETTTTTTTTTTTT')
+      
       new TicketUpdatedPublisher(natsWrapper.client).publish({
         id: ticket.id,
         title: ticket.title,
         price: ticket.price,
         userId: ticket.userId
       })
+
+      ticketEvent.set({ status: EventStatus.COMPLETED })
+      await ticketEvent.save();
+      console.log(ticketEvent, 'TICKETEVENTTTTTTTTTT')
 
       res.status(200).send({
         message: 'Successfully updated a ticket',
