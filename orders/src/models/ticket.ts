@@ -3,18 +3,18 @@ import { Order, OrderStatus } from './order'
 
 // Create an interface representing a document in MongoDB.
 interface ITicket {
+  id: string;
   title: string;
   price: number;
-}
-
-interface TicketModel extends Model<TicketDoc> {
-  build(newTicket: ITicket): TicketDoc;
 }
 
 export interface TicketDoc extends Document {
   title: string,
   price: number,
   isReserved(): Promise<boolean>
+}
+interface TicketModel extends Model<TicketDoc> {
+  build(newTicket: ITicket): TicketDoc;
 }
 
 // Create a Schema corresponding to the document interface.
@@ -38,7 +38,16 @@ const ticketSchema = new Schema<TicketDoc>({
 // extend mongoose schema (ticketSchema) - add a static method
 // Create a new ticket
 ticketSchema.statics.build = (newTicket: ITicket) => {
-  return new Ticket(newTicket)
+  let obj;
+  if (typeof newTicket === 'string') {
+    obj = JSON.parse(newTicket)
+  }
+
+  return new Ticket({
+    _id: obj.id,
+    title: obj.title,
+    price: obj.price
+  })
 }
 
 ticketSchema.methods.isReserved = async function() {
