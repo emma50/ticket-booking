@@ -14,20 +14,30 @@ export class TicketUpdatedListener extends Listener<TicketUpdatedEvent> {
   readonly queueGroupName = queueGroupName
 
   async onMessage(data: TicketUpdatedEvent['data'], msg: Message) {
-    const { id, title, price } = data
-    const ticket = await Ticket.findById(id)
+    let obj;
 
+    if (typeof data === 'string') {
+      obj = JSON.parse(data)
+    }
+    
+    const { id, title, price } = obj
+    const ticket = await Ticket.find({id: JSON.stringify(id)})
+  
     if (!ticket) {
       throw new Error('Ticket not found')
     }
-
-    ticket.set({
-      title,
-      price,
-    })
-
-    await ticket.save()
-
-    msg.ack()
+    
+    try {
+      ticket[0].set({
+        title,
+        price,
+      })
+  
+      await ticket[0].save()
+    } catch(err: any) {
+      console.error(`Error: ${err.message}`)
+    } finally {
+      msg.ack()
+    }
   }
 }
