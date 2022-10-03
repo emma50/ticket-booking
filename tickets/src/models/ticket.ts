@@ -1,4 +1,5 @@
 import { Schema, Model, model, Document } from 'mongoose';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
 // Create an interface representing a document in MongoDB.
 interface ITicket {
@@ -15,6 +16,7 @@ interface TicketDoc extends Document {
   title: string,
   price: number,
   userId: string;
+  version: number;
 }
 
 // Create a Schema corresponding to the document interface.
@@ -35,6 +37,9 @@ const ticketSchema = new Schema<TicketDoc>({
     }
   }
 });
+
+ticketSchema.set('versionKey', 'version')
+ticketSchema.plugin(updateIfCurrentPlugin)
 
 // extend mongoose schema (ticketSchema) - add a static method
 // Create a new ticket
