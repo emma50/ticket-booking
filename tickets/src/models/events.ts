@@ -1,5 +1,6 @@
 import { Schema, Model, model, Document } from 'mongoose';
 import { Subjects } from '@e50tickets/common'
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
 export enum EventStatus {
   COMPLETED = 'completed',
@@ -11,6 +12,7 @@ interface ITicket {
   title: string;
   price: number;
   userId: string;
+  version: number
 }
 
 interface IEvents {
@@ -30,6 +32,7 @@ export interface EventDoc extends Document {
     title: string,
     price: number,
     userId: string,
+    version: number,
   };
   status: EventStatus;
   createdAt: Date;
@@ -46,6 +49,7 @@ const eventSchema = new Schema<EventDoc>({
     title: { type: String, required: true },
     price: { type: Number, required: true },
     userId: { type: String, required: true },
+    version: { type: Number, required: true },
   },
   status: {
     type: String,
@@ -67,6 +71,9 @@ const eventSchema = new Schema<EventDoc>({
   },
   timestamps: true,
 });
+
+eventSchema.set('versionKey', 'version')
+eventSchema.plugin(updateIfCurrentPlugin)
 
 // extend mongoose schema (eventSchema) - add a static method
 // Create a new event
