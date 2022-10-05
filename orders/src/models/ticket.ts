@@ -1,4 +1,5 @@
 import { Schema, Model, model, Document } from 'mongoose';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 import { Order, OrderStatus } from './order'
 
 // Create an interface representing a document in MongoDB.
@@ -11,6 +12,7 @@ interface ITicket {
 export interface TicketDoc extends Document {
   title: string,
   price: number,
+  version: number,
   isReserved(): Promise<boolean>
 }
 interface TicketModel extends Model<TicketDoc> {
@@ -35,19 +37,27 @@ const ticketSchema = new Schema<TicketDoc>({
   }
 });
 
+ticketSchema.set('versionKey', 'version')
+ticketSchema.plugin(updateIfCurrentPlugin)
+
 // extend mongoose schema (ticketSchema) - add a static method
 // Create a new ticket
 ticketSchema.statics.build = (newTicket: ITicket) => {
-  let obj;
-  if (typeof newTicket === 'string') {
-    obj = JSON.parse(newTicket)
-  }
-
   return new Ticket({
-    _id: obj.id,
-    title: obj.title,
-    price: obj.price
+    _id: newTicket.id,
+    title: newTicket.title,
+    price: newTicket.price
   })
+  // let obj;
+  // if (typeof newTicket === 'string') {
+  //   obj = JSON.parse(newTicket)
+  // }
+
+  // return new Ticket({
+  //   _id: obj.id,
+  //   title: obj.title,
+  //   price: obj.price
+  // })
 }
 
 ticketSchema.methods.isReserved = async function() {

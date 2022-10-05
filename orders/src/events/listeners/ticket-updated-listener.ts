@@ -13,29 +13,30 @@ export class TicketUpdatedListener extends Listener<TicketUpdatedEvent> {
   // queue-group ensures events are sent to only one instance at a time
   readonly queueGroupName = queueGroupName
 
-  async onMessage(data: TicketUpdatedEvent['data'], msg: Message) {
-    let obj;
-
-    if (typeof data === 'string') {
-      obj = JSON.parse(data)
-    }
+  async onMessage(data: TicketUpdatedEvent['data'], msg: Message) {    
+    const { id, title, price, version } = data
     
-    const { id, title, price } = obj
-    const ticket = await Ticket.find({id: JSON.stringify(id)})
+    // const ticket = await Ticket.find({id: JSON.stringify(id)})
+    const ticket = await Ticket.findOne({
+      id,
+      version: version - 1,
+    })
+    console.log(ticket, 'TICKETTTTS')
   
     if (!ticket) {
       throw new Error('Ticket not found')
     }
     
     try {
-      ticket[0].set({
+      ticket.set({
         title,
         price,
       })
   
-      await ticket[0].save()
+      await ticket.save()
     } catch(err: any) {
-      console.error(`Error: ${err.message}`)
+      console.log('IS PLENTY OH')
+      console.error(`Error: ${err}`)
     } finally {
       msg.ack()
     }

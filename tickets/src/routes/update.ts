@@ -68,7 +68,8 @@ router.put('/api/tickets/:id', requireAuth, [
         id: ticket.id,
         title: ticket.title,
         price: ticket.price,
-        userId: ticket.userId
+        userId: ticket.userId,
+        version: ticket.version,
       })
 
       ticketEvent.set({ status: EventStatus.COMPLETED })

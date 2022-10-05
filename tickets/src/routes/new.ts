@@ -46,14 +46,13 @@ router.post('/api/tickets', requireAuth, [
         }
       });
       await ticketEvent.save();
-      console.log(ticket)
-      console.log(ticketEvent)
 
       await new TicketCreatedPublisher(natsWrapper.client).publish({
         id: ticketEvent.id,
         title: ticketEvent.data.title,
         price: ticketEvent.data.price,
-        userId: ticketEvent.data.userId
+        userId: ticketEvent.data.userId,
+        version: ticketEvent.data.version,
       })
 
       ticketEvent.set({ status: EventStatus.COMPLETED })
