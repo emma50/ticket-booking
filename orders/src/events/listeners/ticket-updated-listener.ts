@@ -35,7 +35,6 @@ export class TicketUpdatedListener extends Listener<TicketUpdatedEvent> {
   
       await ticket.save()
     } catch(err: any) {
-      console.log('IS PLENTY OH')
       console.error(`Error: ${err}`)
     } finally {
       msg.ack()
