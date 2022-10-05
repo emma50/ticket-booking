@@ -1,6 +1,5 @@
 import { Schema, Model, model, Document } from 'mongoose';
 import { Subjects } from '@e50tickets/common'
-import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
 export enum EventStatus {
   COMPLETED = 'completed',
@@ -71,9 +70,6 @@ const eventSchema = new Schema<EventDoc>({
   },
   timestamps: true,
 });
-
-eventSchema.set('versionKey', 'version')
-eventSchema.plugin(updateIfCurrentPlugin)
 
 // extend mongoose schema (eventSchema) - add a static method
 // Create a new event
