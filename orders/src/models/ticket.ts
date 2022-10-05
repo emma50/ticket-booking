@@ -17,6 +17,7 @@ export interface TicketDoc extends Document {
 }
 interface TicketModel extends Model<TicketDoc> {
   build(newTicket: ITicket): TicketDoc;
+  findByEvent(event: { id: string, version: number }): Promise<TicketDoc | null>
 }
 
 // Create a Schema corresponding to the document interface.
@@ -47,6 +48,13 @@ ticketSchema.statics.build = (newTicket: ITicket) => {
     _id: newTicket.id,
     title: newTicket.title,
     price: newTicket.price
+  })
+}
+
+ticketSchema.statics.findByEvent = (event: { id: string, version: number }) => {
+  return Ticket.findOne({
+    id: event.id,
+    version: event.version - 1
   })
 }
 
