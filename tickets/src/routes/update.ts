@@ -61,8 +61,6 @@ router.put('/api/tickets/:id', requireAuth, [
         }
       });
       await ticketEvent.save();
-      console.log(ticket)
-      console.log(ticketEvent)
       
       new TicketUpdatedPublisher(natsWrapper.client).publish({
         id: ticket.id,
