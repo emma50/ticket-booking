@@ -34,10 +34,9 @@ export class TicketUpdatedListener extends Listener<TicketUpdatedEvent> {
       })
   
       await ticket.save()
+      msg.ack()
     } catch(err: any) {
       console.error(`Error: ${err}`)
-    } finally {
-      msg.ack()
     }
   }
 }

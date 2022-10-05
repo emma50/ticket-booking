@@ -12,11 +12,11 @@ export class TicketCreatedListener extends Listener<TicketCreatedEvent> {
   async onMessage(data: TicketCreatedEvent['data'], msg: Message) {
     try {
       const ticket = Ticket.build(data)
+      
       await ticket.save()
+      msg.ack()
     } catch(err) {
       console.error(`Error: ${err}`)
-    } finally {
-      msg.ack()
     }
   }
 }
