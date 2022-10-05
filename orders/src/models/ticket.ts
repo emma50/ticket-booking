@@ -48,16 +48,6 @@ ticketSchema.statics.build = (newTicket: ITicket) => {
     title: newTicket.title,
     price: newTicket.price
   })
-  // let obj;
-  // if (typeof newTicket === 'string') {
-  //   obj = JSON.parse(newTicket)
-  // }
-
-  // return new Ticket({
-  //   _id: obj.id,
-  //   title: obj.title,
-  //   price: obj.price
-  // })
 }
 
 ticketSchema.methods.isReserved = async function() {
