@@ -49,7 +49,7 @@ router.patch('/api/orders/:orderId',
         id: order.id,
         status: order.status,
         userId: order.userId,
-        version: order.ticket.version,
+        version: order.version,
         ticket: {
           id: order.ticket.id,
           price: order.ticket.price

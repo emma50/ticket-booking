@@ -4,6 +4,7 @@ import mongoose, {
   model,
   Document
 } from 'mongoose';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 import { OrderStatus } from '@e50tickets/common'
 import { TicketDoc } from './ticket'
 
@@ -21,6 +22,7 @@ interface OrderDoc extends Document {
   status: OrderStatus;
   expiresAt: Date;
   ticket: TicketDoc;
+  version: number;
 }
 
 interface OrderModel extends Model<OrderDoc> {
@@ -59,6 +61,9 @@ const orderSchema = new Schema<OrderDoc>({
     }
   }
 });
+
+orderSchema.set('versionKey', 'version')
+orderSchema.plugin(updateIfCurrentPlugin)
 
 // extend mongoose schema (OrderSchema) - add a static method
 // Create a new Order
