@@ -4,7 +4,8 @@ import {
   validateRequest,
   NotAuthorizedError,
   NotFoundError,
-  Subjects
+  Subjects,
+  BadRequestError
 } from '@e50tickets/common';
 import { body } from 'express-validator'
 import mongoose from 'mongoose';
@@ -32,11 +33,15 @@ router.put('/api/tickets/:id', requireAuth, [
     const ticket = await Ticket.findById(id)
 
     if (!ticket) {
-      throw new NotFoundError
+      throw new NotFoundError()
+    }
+
+    if (ticket.orderId) {
+      throw new BadRequestError('Cannot edit a reserved ticket')
     }
 
     if (ticket.userId !== req.currentUser!.id) {
-      throw new NotAuthorizedError
+      throw new NotAuthorizedError()
     }
 
     // start mongoose session
