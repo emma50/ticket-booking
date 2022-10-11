@@ -15,7 +15,7 @@ import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
 
-const EXPIRATION_WINDOW_SECONDS = 15 * 60
+const EXPIRATION_WINDOW_SECONDS = 1 * 60
 
 router.post(
   '/api/orders/',
@@ -35,6 +35,7 @@ router.post(
 
     // Find the ticket a user is trying to order in the database
     const ticket = await Ticket.findById(ticketId)
+
     if (!ticket) {
       throw new NotFoundError()
     }
