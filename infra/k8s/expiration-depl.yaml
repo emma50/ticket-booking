@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: # Describes the deployment 
+  name: expiration-depl # Name of deployment
+spec:
+  replicas: 1 # Create one pod
+  selector: #  A selector for the deployment to apply to the pod that the deployment is describing
+    matchLabels: # What pod the deployment is applied to
+      app: expiration
+  template: # This is a pod template. It describes a pod that is launched
+    metadata: # Describes the pod
+      labels: # label for the pod that the deployment is deploying
+        app: expiration
+    spec:
+      containers:
+      - name: expiration
+        image: ikechukwu1903/expiration
+        env:
+          - name: "NATS_CLIENT_ID"
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name 
+          - name: "NATS_URL"
+            value: "http://nats-srv:4222"
+          - name: "NATS_CLUSTER_ID"
+            value: "ticketing"
+          - name: REDIS_HOST
+            value: expiration-redis-srv
