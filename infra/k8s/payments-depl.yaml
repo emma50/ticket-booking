@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: # Describes the deployment 
+  name: payments-depl # Name of deployment
+spec:
+  replicas: 1 # Create one pod
+  selector: #  A selector for the deployment to apply to the pod that the deployment is describing
+    matchLabels: # What pod the deployment is applied to
+      app: payments
+  template: # This is a pod template. It describes a pod that is launched
+    metadata: # Describes the pod
+      labels: # label for the pod that the deployment is deploying
+        app: payments
+    spec:
+      containers:
+      - name: payments
+        image: ikechukwu1903/payments
+        env:
+          - name: "NATS_CLIENT_ID"
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name 
+          - name: "NATS_URL"
+            value: "http://nats-srv:4222"
+          - name: "NATS_CLUSTER_ID"
+            value: "ticketing"
+          - name: "MONGO_URI"
+            value: "mongodb://payments-mongo-srv:27017/payments" 
+          - name: "MY_SECRETS"
+            valueFrom:
+              secretKeyRef:
+                name: mysecrets
+                key: jwt-secret
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payments-srv # Name of service
+spec:
+  type: ClusterIP # Type of service
+  selector:
+    app: payments # Selects all pods named payments
+  ports:
+    - name: payments
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
