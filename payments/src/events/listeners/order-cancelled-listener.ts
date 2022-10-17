@@ -19,8 +19,6 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
       version: data.version - 1,
     })
 
-    console.log(order, 'OLDDDDDDDDDDDDDDDDDDDD')
-
     if (!order) {
       throw new Error('Order not found')
     }
@@ -33,8 +31,6 @@ export class OrderCancelledListener extends Listener<OrderCancelledEvent> {
       // Save an order
       await order.save()
       // ack the message
-
-      console.log(order, 'NEWWWWWWWWWWWWWWWWW')
       msg.ack()
     } catch(err) {
       console.error(`Error: ${err}`)
