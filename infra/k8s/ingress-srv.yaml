@@ -34,6 +34,14 @@ spec:
                 name: orders-srv
                 port:
                   number: 3000
+          # ingress directs order route traffic to this service
+          - path: /api/payments/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: payments-srv
+                port:
+                  number: 3000
           # ingress directs client (react/nextjs)  route traffic to this service
           - path: /?(.*)
             pathType: Prefix
@@ -42,3 +50,4 @@ spec:
                 name: client-srv
                 port:
                   number: 3000
+          
