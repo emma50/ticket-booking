@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 
 jest.setTimeout(400000)
 jest.mock('../nats-wrapper.ts')
+jest.mock('../stripe.ts')
 declare global {
   var signin: (id?: string) => string[];
 }

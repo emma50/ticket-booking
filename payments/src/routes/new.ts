@@ -12,6 +12,7 @@ import { body } from 'express-validator'
 import mongoose from 'mongoose';
 import { natsWrapper } from '../nats-wrapper';
 import { Order } from '../models/order';
+import { stripe } from '../stripe';
 
 const router = express.Router();
 
@@ -46,9 +47,15 @@ router.post('/api/payments', requireAuth, [
       throw new BadRequestError('Cannot pay for a cancelled order')
     }
 
-    res.send({
-      success: true
-    })
+    // Charges on order
+    await stripe.charges.create({
+      amount: order.price * 100,
+      currency: 'usd',
+      source: token,
+      description: 'You created a ticket order',
+    });
+
+    res.status(201).send({ success: true })
 
     // // start mongoose session
     // const session = await mongoose.startSession();
