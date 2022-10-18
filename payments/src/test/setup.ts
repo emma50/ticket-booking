@@ -1,17 +1,22 @@
 import { MongoMemoryServer } from "mongodb-memory-server"
 import mongoose from "mongoose";
 import jwt from 'jsonwebtoken'
+import * as dotenv from 'dotenv'
+
+dotenv.config()
 
 jest.setTimeout(400000)
 jest.mock('../nats-wrapper.ts')
-jest.mock('../stripe.ts')
+// jest.mock('../stripe.ts')
 declare global {
   var signin: (id?: string) => string[];
 }
 
+process.env.STRIPE_KEY
+
 let mongo: any;
 beforeAll(async() => {
-   process.env.MY_SECRETS = 'asdfasdf'
+  process.env.MY_SECRETS
   // Create a mongo memory server connection before running all tests
   mongo = await MongoMemoryServer.create();
   const mongoUri = mongo.getUri()
