@@ -9,10 +9,11 @@ import {
   OrderStatus,
 } from '@e50tickets/common';
 import { body } from 'express-validator'
-import mongoose from 'mongoose';
+import mongoose, { version } from 'mongoose';
 import { natsWrapper } from '../nats-wrapper';
 import { Order } from '../models/order';
 import { stripe } from '../stripe';
+import { Payment } from '../models/payment';
 
 const router = express.Router();
 
@@ -47,13 +48,22 @@ router.post('/api/payments', requireAuth, [
       throw new BadRequestError('Cannot pay for a cancelled order')
     }
 
-    // Charges on order
-    await stripe.charges.create({
+    // Charge on order
+    const charge = await stripe.charges.create({
       amount: order.price * 100,
       currency: 'usd',
       source: token,
       description: 'You created a ticket order',
     });
+
+    // Create and save payment
+    const payment = Payment.build({
+      orderId: order.id,
+      stripeId: charge.id,
+      version: order.version - 1,
+    })
+    
+    await payment.save()
 
     res.status(201).send({ success: true })
 
