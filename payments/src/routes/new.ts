@@ -14,6 +14,7 @@ import { natsWrapper } from '../nats-wrapper';
 import { Order } from '../models/order';
 import { stripe } from '../stripe';
 import { Payment } from '../models/payment';
+import { PaymentCreatedPublisher } from '../events/publishers/payment-created-publisher';
 
 const router = express.Router();
 
@@ -48,39 +49,50 @@ router.post('/api/payments', requireAuth, [
       throw new BadRequestError('Cannot pay for a cancelled order')
     }
 
-    // Charge on order
-    const charge = await stripe.charges.create({
-      amount: order.price * 100,
-      currency: 'usd',
-      source: token,
-      description: 'You created a ticket order',
-    });
+    // start mongoose session
+    const session = await mongoose.startSession();
 
-    // Create and save payment
-    const payment = Payment.build({
-      orderId: order.id,
-      stripeId: charge.id,
-      version: order.version - 1,
-    })
-    
-    await payment.save()
+    try {
+      // Start transaction
+      await session.startTransaction();
 
-    res.status(201).send({ success: true })
+      // Charge on order
+      const charge = await stripe.charges.create({
+        amount: order.price * 100,
+        currency: 'usd',
+        source: token,
+        description: 'You created a ticket order',
+      });
 
-    // // start mongoose session
-    // const session = await mongoose.startSession();
+      // Create and save payment
+      const payment = Payment.build({
+        orderId: order.id,
+        stripeId: charge.id,
+        version: order.version - 1,
+      })
+      
+      await payment.save()
 
-    // try {
-    //   // Start transaction
-    //   await session.startTransaction();
-    // } catch (err) {
-    //   // remove everything from db on error
-    //   await session.abortTransaction();
-    //   throw err;
-    // } finally {
-    //   // close session on both success and error
-    //   await session.endSession();
-    // }
+      await new PaymentCreatedPublisher(natsWrapper.client).publish({
+        id: payment.id,
+        orderId: payment.orderId,
+        stripeId: payment.stripeId
+      })
+
+      res.status(201).send({
+        success: true,
+        message: 'Payment was successful',
+        data: payment,
+      })
+
+    } catch (err) {
+      // remove everything from db on error
+      await session.abortTransaction();
+      throw err;
+    } finally {
+      // close session on both success and error
+      await session.endSession();
+    }
 })
 
 export { router as createChargeRouter }
