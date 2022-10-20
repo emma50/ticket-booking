@@ -1,8 +1,8 @@
 import { Message } from "node-nats-streaming";
-import { Listener,
+import {
+  Listener,
   Subjects,
   TicketUpdatedEvent,
-  NotFoundError
 } from "@e50tickets/common";
 import { Ticket } from "../../models/ticket";
 import { queueGroupName } from "./queue-group-name";

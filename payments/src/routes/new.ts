@@ -2,14 +2,13 @@ import express, { Request, Response } from 'express';
 import {
   requireAuth,
   validateRequest,
-  Subjects,
   BadRequestError,
   NotFoundError,
   NotAuthorizedError,
   OrderStatus,
 } from '@e50tickets/common';
 import { body } from 'express-validator'
-import mongoose, { version } from 'mongoose';
+import mongoose from 'mongoose';
 import { natsWrapper } from '../nats-wrapper';
 import { Order } from '../models/order';
 import { stripe } from '../stripe';
