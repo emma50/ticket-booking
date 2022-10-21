@@ -1,5 +1,3 @@
-import buildClient from '../api/build-client'
-
 // code executed on the browser
 const Landing = ({ currentUser }) => {
   console.log(currentUser)
@@ -9,10 +7,8 @@ const Landing = ({ currentUser }) => {
 
 // code executed on the server during the SSR process
 // or the browser during the CSR process
-Landing.getInitialProps = async (context) => {
-  const client = buildClient(context)
-  const res = await client.get('/api/users/currentuser')
-  return res.data
+Landing.getInitialProps = async (context, client, currentUser) => {
+  return {}
 }
 
 export default Landing
