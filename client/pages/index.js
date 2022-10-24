@@ -1,14 +1,38 @@
 // code executed on the browser
-const Landing = ({ currentUser }) => {
-  console.log(currentUser)
-  return currentUser ? <h1>You are already signed in</h1>
-  : <h1>You are not signed in</h1>
+const Landing = ({ currentUser, tickets }) => {
+  const ticketList = tickets.map((tickets) => {
+    return (
+      <tr key={tickets.id}>
+        <td>{tickets.title}</td>
+        <td>{tickets.price}</td>
+      </tr>
+    )
+  })
+
+  return (
+    <div>
+      {currentUser ? <h4>You are already signed in</h4> : <h4>You are not signed in</h4>}
+      <h1>Tickets</h1>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ticketList}
+        </tbody>
+      </table>
+    </div>
+  )
 }
 
 // code executed on the server during the SSR process
 // or the browser during the CSR process
 Landing.getInitialProps = async (context, client, currentUser) => {
-  return {}
+  const res = await client.get('/api/tickets')
+   return { tickets: res.data.data }
 }
 
 export default Landing
