@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 
 const OrderShow = ({ order }) => {
-  const [timeLeft, setTimeLeft] = useState('')
+  const [timeLeft, setTimeLeft] = useState(0)
 
   useEffect(() => {
     const findTimeLeft = () => {
-      
+
       const msLeft = new Date(order.expiresAt) - new Date()
       // msLeft / 1000 converts millisecs to secs
       setTimeLeft(Math.round(msLeft / 1000))
@@ -22,8 +22,12 @@ const OrderShow = ({ order }) => {
     }
   }, [order])
 
+  const expirationTimer = timeLeft <= 0
+    ? `Sorry your order has expired`
+    : `Time left to pay: ${timeLeft} seconds`
+
   return (
-    <div>Time left to pay: {timeLeft} seconds</div>
+    <div>{expirationTimer}</div>
   )
 }
 
