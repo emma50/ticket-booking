@@ -8,7 +8,7 @@ const TicketShow = ({ ticket }) => {
     body: {
       ticketId: ticket.id
     },
-    onSuccess: (order) => Router.push('/orders/orderId', `/orders/${order.data.id}`)
+    onSuccess: (order) => Router.push(`/orders/${order.data.id}`)
   })
   return (
     <div>
