@@ -33,7 +33,7 @@ const OrderShow = ({ order, currentUser }) => {
       <StripeCheckout
         token={(token) => console.log(token)}
         // stripe publishable key
-        stripeKey={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+        stripeKey={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY.trim()}
         // convert to dollar (stripe treats everything as cents)
         amount={order.ticket.price * 100}
         email={currentUser.email}
