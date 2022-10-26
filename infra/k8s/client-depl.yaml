@@ -15,6 +15,12 @@ spec:
       containers:
       - name: client
         image: ikechukwu1903/client
+        env:
+          - name: "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"
+            valueFrom:
+              secretKeyRef:
+                name: mysecrets
+                key: stripe-publishable-key
 
 ---
 apiVersion: v1

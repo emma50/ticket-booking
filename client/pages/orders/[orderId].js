@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
+import StripeCheckout from 'react-stripe-checkout';
 
-const OrderShow = ({ order }) => {
+const OrderShow = ({ order, currentUser }) => {
   const [timeLeft, setTimeLeft] = useState(0)
 
   useEffect(() => {
@@ -27,7 +28,17 @@ const OrderShow = ({ order }) => {
     : `Time left to pay: ${timeLeft} seconds`
 
   return (
-    <div>{expirationTimer}</div>
+    <div>
+      {expirationTimer}
+      <StripeCheckout
+        token={(token) => console.log(token)}
+        // stripe publishable key
+        stripeKey={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+        // convert to dollar (stripe treats everything as cents)
+        amount={order.ticket.price * 1000}
+        email={currentUser.email}
+      />
+    </div>
   )
 }
 
