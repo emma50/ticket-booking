@@ -12,6 +12,7 @@ const Landing = ({ currentUser, tickets }) => {
             <a >View</a>
           </Link>
         </td>
+        <td>{ticket.orderId ? 'reserved' : 'open'}</td>
       </tr>
     )
   })
@@ -26,6 +27,7 @@ const Landing = ({ currentUser, tickets }) => {
             <th>Title</th>
             <th>Price</th>
             <th>Link</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>
