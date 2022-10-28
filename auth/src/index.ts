@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { app } from "./app";
 
 const start = async () => {
+  console.log('Starting up...')
   if (!process.env.MY_SECRETS) {
     throw new Error('All secrets must be defined')
   }
