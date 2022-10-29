@@ -7,6 +7,7 @@ import { ExpirationCompleteListener } from "./events/listeners/expiration-comple
 import { PaymentCreatedListener } from "./events/listeners/payment-created-listener";
 
 const start = async () => {
+  console.log('Starting...')
   if (!process.env.MY_SECRETS) {
     throw new Error('All secrets must be defined')
   }
