@@ -12,4 +12,4 @@ jobs:
         env:
           STRIPE_KEY: ${{ secrets.STRIPE_KEY }}
       - run: cd payments && npm install
-      - run: npm run test:ci
+      - run: cd payments && npm run test:ci
