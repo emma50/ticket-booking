@@ -6,7 +6,7 @@
   "scripts": {
     "start": "ts-node-dev src/index.ts",
     "test": "jest --watchAll --no-cache",
-    "test:ci": "jest --maxWorkers=50%",
+    "test:ci": "jest --clearCache",
     "common-update": "npm update @e50tickets/common"
   },
   "jest": {
