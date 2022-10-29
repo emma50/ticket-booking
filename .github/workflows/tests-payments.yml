@@ -6,12 +6,9 @@ on:
 jobs:
   builds:
     runs-on: ubuntu-latest
+    env:
+      STRIPE_KEY: ${{ secrets.STRIPE_KEY }}
     steps:
-      - name: "Payment service"
-        uses: actions/checkout@v2
-        with:
-          secrets: ${{ secrets.STRIPE_KEY }}
-        env:
-          STRIPE_KEY: ${{ secrets.STRIPE_KEY }}
+      - uses: actions/checkout@v2
       - run: cd payments && npm install
       - run: cd payments && npm run test:ci
